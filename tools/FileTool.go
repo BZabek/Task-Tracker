@@ -15,7 +15,11 @@ const filename = "db.json"
 func CreateFileIfNotExist() {
 	_, error := os.Stat(filename)
 	if errors.Is(error, os.ErrNotExist) {
-		SaveChanges(model.DB{NextID: 1})
+		SaveChanges(
+			model.DB{
+				NextID: 1,
+				Tasks:  make(map[int64]model.Task),
+			})
 	}
 }
 

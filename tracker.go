@@ -19,6 +19,9 @@ func main() {
 		add()
 	case "update":
 		update()
+	case "delete":
+		deleteTask()
+
 	}
 }
 
@@ -35,10 +38,12 @@ func add() {
 		ID:   DB.NextID,
 		Name: name,
 	}
+	if DB.Tasks == nil {
+		DB.Tasks = make(map[int64]model.Task)
+	}
 
+	DB.Tasks[newTask.ID] = newTask
 	DB.NextID = DB.NextID + 1
-	DB.Tasks = append(DB.Tasks, newTask)
-
 	error = tools.SaveChanges(DB)
 
 	if error != nil {
@@ -63,20 +68,44 @@ func update() {
 	}
 
 	DB, error := tools.GetDB()
+
+	fmt.Println("123")
 	if error != nil {
-		fmt.Println("Some error occured while adding a task")
+		fmt.Println(error)
+		return
+	}
+	fmt.Println("123")
+	task, ok := DB.Tasks[id]
+	if !ok {
+		fmt.Printf("id:%d not found ", id)
 		return
 	}
 
-	if DB.Tasks != nil {
-		for i := range DB.Tasks {
-			if DB.Tasks[i].ID == id {
-				DB.Tasks[i].Name = name
-				tools.SaveChanges(DB)
-				return
-			}
-		}
+	task.Name = name
+	DB.Tasks[id] = task
+	tools.SaveChanges(DB)
+}
+
+func deleteTask() {
+	id, error := strconv.ParseInt(os.Args[2], 0, 64)
+	if error != nil {
+		fmt.Println(error, "Second parameter should contain id of task")
+		return
 	}
 
-	fmt.Printf("id:%d not found ", id)
+	DB, error := tools.GetDB()
+
+	if error != nil {
+		fmt.Println(error)
+		return
+	}
+
+	task, ok := DB.Tasks[id]
+	if !ok {
+		fmt.Printf("id:%d not found "+task.Name, id)
+		return
+	}
+
+	delete(DB.Tasks, id)
+	tools.SaveChanges(DB)
 }

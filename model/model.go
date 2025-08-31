@@ -2,8 +2,8 @@
 package model
 
 type DB struct {
-	Tasks  []Task
 	NextID int64
+	Tasks  map[int64]Task
 }
 
 type Task struct {
