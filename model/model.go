@@ -3,11 +3,11 @@ package model
 
 type DB struct {
 	Tasks  []Task
-	NextID int
+	NextID int64
 }
 
 type Task struct {
-	ID    int
+	ID    int64
 	Name  string
 	State TaskState
 }

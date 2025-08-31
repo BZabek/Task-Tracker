@@ -13,9 +13,7 @@ import (
 const filename = "db.json"
 
 func CreateFileIfNotExist() {
-	log.Println("sttt")
 	_, error := os.Stat(filename)
-	log.Println("asdas", error)
 	if errors.Is(error, os.ErrNotExist) {
 		SaveChanges(model.DB{NextID: 1})
 	}
