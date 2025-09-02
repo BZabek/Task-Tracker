@@ -4,6 +4,7 @@ package tools
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"log"
 	"os"
 
@@ -55,4 +56,19 @@ func GetDB() (model.DB, error) {
 	}
 
 	return result, errors
+}
+
+func GetTaskByID(id int64) (model.DB, model.Task, error) {
+	DB, error := GetDB()
+
+	if error != nil {
+		fmt.Println(error)
+		return DB, model.Task{}, error
+	}
+	task, ok := DB.Tasks[id]
+	if !ok {
+		return DB, task, fmt.Errorf("id:%d not found ", id)
+	}
+
+	return DB, task, nil
 }
